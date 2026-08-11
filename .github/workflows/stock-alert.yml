@@ -1,5 +1,5 @@
 name: Stock Price Alerts
-
+# refresh
 on:
   schedule:
     - cron: '*/5 3-9 * * 1-5'
