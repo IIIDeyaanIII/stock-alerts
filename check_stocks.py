@@ -1,10 +1,10 @@
 """
 Stock price alert checker.
 Reads config.json for the list of stocks + target prices,
-fetches live prices, and sends a Telegram message when a target
-is crossed. Keeps state.json so it only notifies once per crossing
-(and resets automatically if price moves back the other way, so it
-can alert you again next time it crosses).
+fetches live prices, and sends a Telegram message EVERY TIME
+a target is currently crossed (no suppression) - so if a stock
+stays past its target, you'll get a fresh alert on every run
+until it moves back.
 """
 
 import json
@@ -75,33 +75,24 @@ def main():
             print(f"Error fetching price for {symbol}: {e}")
             continue
 
-        prev = state.get(symbol, {})
-        was_notified = prev.get("notified", False)
-
         hit = (direction == "above" and price >= target) or (
             direction == "below" and price <= target
         )
 
         print(f"{symbol}: price={price} target={target} direction={direction} hit={hit}")
 
-        if hit and not was_notified:
+        if hit:
             arrow = "up to" if direction == "above" else "down to"
             msg = (
                 f"\U0001F514 {symbol} is now {arrow} \u20b9{price:.2f}\n"
                 f"(target: {direction} \u20b9{target})"
             )
             send_telegram(msg)
-            state[symbol] = {"notified": True, "last_price": price}
+
+        prev = state.get(symbol, {})
+        if prev.get("last_price") != price:
+            state[symbol] = {"last_price": price}
             state_changed = True
-        elif not hit and was_notified:
-            # Price moved back past target -> reset so it can alert again later
-            state[symbol] = {"notified": False, "last_price": price}
-            state_changed = True
-        else:
-            if prev.get("last_price") != price:
-                state.setdefault(symbol, {"notified": was_notified})
-                state[symbol]["last_price"] = price
-                state_changed = True
 
     if state_changed:
         save_json(STATE_PATH, state)
