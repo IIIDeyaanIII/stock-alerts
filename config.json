@@ -2,7 +2,7 @@
   "stocks": {
     "HDFCBANK.NS": {
       "target": 1700,
-      "direction": "above"
+      "direction": "below"
     }
   }
 }
