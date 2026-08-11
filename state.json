@@ -1,6 +1,10 @@
 {
   "HDFCBANK.NS": {
     "notified": true,
-    "last_price": 727.5499877929688
+    "last_price": 728.0
+  },
+  "AMBER.NS": {
+    "notified": false,
+    "last_price": 7152.5
   }
 }
