@@ -1,10 +1,14 @@
 {
   "stocks": {
-    "HDFCBANK.NS": { "target": 700, "direction": "above" },
-    "AMBER.NS": { "target": 7095, "direction": "below" }
-    "AMBER.NS": { "target": 7800, "direction": "above" }
-    "AMBER.NS": { "target": 7500, "direction": "above" }
-    "AMBER.NS": { "target": 7100, "direction": "above" }
-    "AMBER.NS": { "target": 7000, "direction": "above" }
+    "HDFCBANK.NS": [
+      { "target": 700, "direction": "above" }
+    ],
+    "AMBER.NS": [
+      { "target": 7095, "direction": "below" },
+      { "target": 7800, "direction": "above" },
+      { "target": 7500, "direction": "above" },
+      { "target": 7100, "direction": "above" },
+      { "target": 7000, "direction": "above" }
+    ]
   }
 }
