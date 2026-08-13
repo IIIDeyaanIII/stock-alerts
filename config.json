@@ -7,8 +7,7 @@
       { "target": 7095, "direction": "below" },
       { "target": 7800, "direction": "above" },
       { "target": 7500, "direction": "above" },
-      { "target": 7100, "direction": "above" },
-      { "target": 7000, "direction": "above" }
+      { "target": 7100, "direction": "above" }
     ]
   }
 }
