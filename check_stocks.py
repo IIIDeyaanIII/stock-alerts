@@ -1,10 +1,9 @@
 """
 Stock price alert checker.
-Reads config.json for the list of stocks + target prices,
-fetches live prices, and sends a Telegram message EVERY TIME
-a target is currently crossed (no suppression) - so if a stock
-stays past its target, you'll get a fresh alert on every run
-until it moves back.
+Reads config.json for the list of stocks + one-or-more target rules per stock,
+fetches live prices, and sends a Telegram message EVERY TIME any target rule
+is currently crossed (no suppression) - so while a stock stays past a target,
+you'll get a fresh alert on every run until it moves back.
 """
 
 import json
@@ -50,6 +49,13 @@ def get_price(symbol):
     return float(price)
 
 
+def normalize_rules(rule_value):
+    """Accept either a single rule dict or a list of rule dicts."""
+    if isinstance(rule_value, list):
+        return rule_value
+    return [rule_value]
+
+
 def main():
     config = load_json(CONFIG_PATH, {"stocks": {}})
     state = load_json(STATE_PATH, {})
@@ -61,13 +67,8 @@ def main():
 
     state_changed = False
 
-    for symbol, rule in stocks.items():
-        target = rule.get("target")
-        direction = rule.get("direction", "above")  # "above" or "below"
-
-        if target is None:
-            print(f"Skipping {symbol}: no 'target' set in config.json")
-            continue
+    for symbol, rule_value in stocks.items():
+        rules = normalize_rules(rule_value)
 
         try:
             price = get_price(symbol)
@@ -75,19 +76,27 @@ def main():
             print(f"Error fetching price for {symbol}: {e}")
             continue
 
-        hit = (direction == "above" and price >= target) or (
-            direction == "below" and price <= target
-        )
+        for rule in rules:
+            target = rule.get("target")
+            direction = rule.get("direction", "above")
 
-        print(f"{symbol}: price={price} target={target} direction={direction} hit={hit}")
+            if target is None:
+                print(f"Skipping a rule for {symbol}: no 'target' set")
+                continue
 
-        if hit:
-            arrow = "up to" if direction == "above" else "down to"
-            msg = (
-                f"\U0001F514 {symbol} is now {arrow} \u20b9{price:.2f}\n"
-                f"(target: {direction} \u20b9{target})"
+            hit = (direction == "above" and price >= target) or (
+                direction == "below" and price <= target
             )
-            send_telegram(msg)
+
+            print(f"{symbol}: price={price} target={target} direction={direction} hit={hit}")
+
+            if hit:
+                arrow = "up to" if direction == "above" else "down to"
+                msg = (
+                    f"\U0001F514 {symbol} is now {arrow} \u20b9{price:.2f}\n"
+                    f"(target: {direction} \u20b9{target})"
+                )
+                send_telegram(msg)
 
         prev = state.get(symbol, {})
         if prev.get("last_price") != price:
