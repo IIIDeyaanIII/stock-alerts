@@ -1,8 +1,5 @@
 {
   "stocks": {
-    "HDFCBANK.NS": [
-      { "target": 700, "direction": "above" }
-    ],
     "AMBER.NS": [
       { "target": 7095, "direction": "below" },
       { "target": 7800, "direction": "above" },
