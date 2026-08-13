@@ -91,9 +91,14 @@ def main():
             print(f"{symbol}: price={price} target={target} direction={direction} hit={hit}")
 
             if hit:
-                arrow = "up to" if direction == "above" else "down to"
+                if direction == "above":
+                    emoji = "\U0001F534"  # red circle
+                    arrow = "up to"
+                else:
+                    emoji = "\U0001F7E2"  # green circle
+                    arrow = "down to"
                 msg = (
-                    f"\U0001F514 {symbol} is now {arrow} \u20b9{price:.2f}\n"
+                    f"{emoji} {symbol} is now {arrow} \u20b9{price:.2f}\n"
                     f"(target: {direction} \u20b9{target})"
                 )
                 send_telegram(msg)
