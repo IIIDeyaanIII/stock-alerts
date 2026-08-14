@@ -2,7 +2,7 @@ name: Stock Price Alerts
 # refresh
 on:
   schedule:
-    - cron: '*/5 3-9 * * 1-5'
+    - cron: '*/10 3-9 * * 1-5'
     - cron: '0 10 * * 1-5'
   workflow_dispatch: {}
 
